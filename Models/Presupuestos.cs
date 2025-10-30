@@ -1,9 +1,9 @@
 public class Presupuestos
 {
-    private int idPresupuesto;
-    private string nombreDestinario;
-    private DateTime FechaCreacion;
-    private List<PresupuestosDetalle> detalle;
+    public int idPresupuesto { get; set; }
+    public string nombreDestinario { get; set; }
+    public DateTime FechaCreacion { get; set; }
+    public List<PresupuestosDetalle> detalle { get; set; }
 
     public double MontoPresupuestoConIva(List<PresupuestosDetalle> detalle)
     {
@@ -19,7 +19,6 @@ public class Presupuestos
         }
         return total;
     }
-
     public int CantidadProductos()
     {
         int cantidad = 0;

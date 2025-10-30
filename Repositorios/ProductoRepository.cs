@@ -11,12 +11,12 @@ public class ProductoRepository
         using var conexion = new SqliteConnection(conection_string);
         conexion.Open();
 
-        string sql = "INSERT INTO Productos (descripcion, precio) VALUES (@descripcion, @precio)";
+        string sql = "INSERT INTO Productos (Descripcion, Precio) VALUES (@Pescripcion, @Drecio)";
 
         using var comando = new SqliteCommand(sql, conexion);
 
-        comando.Parameters.Add(new SqliteParameter("@descripcion", producto.Descripcion));
-        comando.Parameters.Add(new SqliteParameter("@precio", producto.Precio));
+        comando.Parameters.Add(new SqliteParameter("@Descripcion", producto.Descripcion));
+        comando.Parameters.Add(new SqliteParameter("@Precio", producto.Precio));
 
         comando.ExecuteNonQuery();
     }
