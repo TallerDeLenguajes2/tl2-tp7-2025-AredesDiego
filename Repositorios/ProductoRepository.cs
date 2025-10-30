@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using Microsoft.Data.Sqlite;
 using Microsoft.VisualBasic;
 
@@ -64,6 +65,41 @@ public class ProductoRepository
 
         return listaProductos;
     }
-    
-    
+    public Productos ObtenerDetalles(int id)
+    {
+        using var conexion = new SqliteConnection(conection_string);
+        conexion.Open();
+
+        string sql = "SELECT idProducto, Descripcion, Precio FROM Productos WHERE idProducto = @id";
+
+        using var comnado = new SqliteCommand(sql, conexion);
+        comnado.Parameters.Add(new SqliteParameter("@id", id));
+
+        using var lector = comnado.ExecuteReader();
+
+        if (lector.Read()) //Si encontró un registro
+        {
+            var producto = new Productos()
+            {
+                idProducto = Convert.ToInt32(lector["idProducto"]),
+                Descripcion = lector["Descripcion"].ToString(),
+                Precio = Convert.ToInt32(lector["Precio"])
+            };
+
+            return producto;
+        }
+
+        return null;
+    }
+    public void EliminarProducto(int id)
+    {
+        using var conexion = new SqliteConnection(conection_string);
+        conexion.Open();
+
+        string sql = "DELETE FROM Productos WHERE idProducto = @id";
+        using var comnado = new SqliteCommand(sql, conexion);
+
+        comnado.Parameters.Add(new SqliteParameter("@id", id));
+        comnado.ExecuteNonQuery();
+    }
 }
