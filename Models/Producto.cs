@@ -1,6 +1,6 @@
 public class Productos
 {
-    private int idProducto;
-    private string descripcion;
-    public int precio { get; private set; }
+    public int idProducto { get; set; }
+    public string Descripcion;
+    public int Precio { get; set; }
 }
