@@ -53,29 +53,63 @@ public class PresupuestosRepository
 	public Presupuestos ObtenerDetalles(int id)
 	{
 		using var conexion = new SqliteConnection(conection_string);
-        conexion.Open();
+		conexion.Open();
 
-        string sql = "SELECT idPresupuestos, NombreDestinatario, FechaCreacion FROM Presupuestos WHERE idPresupuesto = @id";
+		string sql = @"
+						SELECT 
+							p.idPresupuestos,
+							p.NombreDestinatario,
+							p.FechaCreacion,
+							pr.idProducto,
+							pr.Descripcion,
+							pr.Precio,
+							d.Cantidad
+						FROM Presupuestos p
+						INNER JOIN PresupuestoDetalle d ON p.idPresupuestos = d.idPresupuesto
+						INNER JOIN Productos pr ON d.idProducto = pr.idProducto
+						WHERE p.idPresupuestos = @id;
+					";
 
-        using var comando = new SqliteCommand(sql, conexion);
-        comando.Parameters.Add(new SqliteParameter("@id", id));
+		using var comando = new SqliteCommand(sql, conexion);
+		comando.Parameters.Add(new SqliteParameter("@id", id));
 
-        using var lector = comando.ExecuteReader();
+		using var lector = comando.ExecuteReader();
+		
+		Presupuestos presupuesto = null;
 
-        if (lector.Read()) //Si encontró un registro
-        {
-            var presupuesto = new Presupuestos()
-            {
-                idPresupuesto = Convert.ToInt32(lector["idPresupuestos"]),
-                NombreDestinatario = lector["NombreDestinatario"].ToString(),
-                FechaCreacion = Convert.ToDateTime(lector["FechaCreacion"])
-            };
+		while (lector.Read())
+		{
 
-            return presupuesto;
-        }
+			if (presupuesto == null) //Si encontró un registro
+			{
+				presupuesto = new Presupuestos()
+				{
+					idPresupuesto = Convert.ToInt32(lector["idPresupuestos"]),
+					NombreDestinatario = lector["NombreDestinatario"].ToString(),
+					FechaCreacion = Convert.ToDateTime(lector["FechaCreacion"]),
+					Detalle = new List<PresupuestosDetalle>()
+				};
+			}
+			
+			var producto = new Productos()
+			{
+				idProducto = Convert.ToInt32(lector["idProducto"]),
+				Descripcion = lector["Descripcion"].ToString(),
+				Precio = Convert.ToInt32(lector["Precio"])
+			};
 
-        return null;
+			var detalle = new PresupuestosDetalle()
+			{
+				Producto = producto,
+				Cantidad = Convert.ToInt32(lector["Cantidad"])
+			};
+
+			presupuesto.Detalle.Add(detalle);
+		}
+		
+		return presupuesto;
 	}
+    
 
 	/*   public AgregarProdcuto() //Agregar un producto y una cantidad a un presupuesto (recibe un id)
 	{
