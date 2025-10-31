@@ -16,11 +16,11 @@ public class PresupuestosRepository : IPresupuestosRepository
 		using var conexion = new SqliteConnection(conection_string);
 		conexion.Open();
 
-		string sql = "INSERT INTO Presupuestos (idPresupuestos, NombreDestinatario, FechaCreacion) VALUES (@idPresupuestos, @NombreDestinatario, FechaCreacion)";
+		string sql = "INSERT INTO Presupuestos (idPresupuesto, NombreDestinatario, FechaCreacion) VALUES (@idPresupuesto, @NombreDestinatario, @FechaCreacion)";
 
 		using var comando = new SqliteCommand(sql, conexion);
 
-		comando.Parameters.Add(new SqliteParameter("@idPresupuestos", presupuestos.idPresupuesto));
+		comando.Parameters.Add(new SqliteParameter("@idPresupuesto", presupuestos.idPresupuesto));
 		comando.Parameters.Add(new SqliteParameter("@NombreDestinatario", presupuestos.NombreDestinatario));
 		comando.Parameters.Add(new SqliteParameter("@FechaCreacion", presupuestos.FechaCreacion));
 
@@ -35,23 +35,19 @@ public class PresupuestosRepository : IPresupuestosRepository
 		using var connection = new SqliteConnection(conection_string);
 		connection.Open();
 
-		var comando = new SqliteCommand(sql, connection);
+		using var comando = new SqliteCommand(sql, connection);
+		using SqliteDataReader reader = comando.ExecuteReader();
 
-		using (SqliteDataReader reader = comando.ExecuteReader())
+		while (reader.Read())
 		{
-			var sqlite_command = new SqliteCommand(sql, connection);
-
-			while (reader.Read())
+			var presupuestos = new Presupuestos()
 			{
-				var presupuestos = new Presupuestos()
-				{
-					idPresupuesto = Convert.ToInt32(reader["idPresupuestos"]),
-					NombreDestinatario = reader["NombreDestinatario"].ToString(),
-					FechaCreacion = Convert.ToDateTime(reader["FechaCreacion"])
-				};
+				idPresupuesto = Convert.ToInt32(reader["idPresupuesto"]),
+				NombreDestinatario = reader["NombreDestinatario"].ToString(),
+				FechaCreacion = Convert.ToDateTime(reader["FechaCreacion"])
+			};
 
-				listaPresupuestos.Add(presupuestos);
-			}
+			listaPresupuestos.Add(presupuestos);
 		}
 
 		connection.Close();
@@ -65,7 +61,7 @@ public class PresupuestosRepository : IPresupuestosRepository
 
 		string sql = @"
 						SELECT 
-							p.idPresupuestos,
+							p.idPresupuesto,
 							p.NombreDestinatario,
 							p.FechaCreacion,
 							pr.idProducto,
@@ -73,9 +69,9 @@ public class PresupuestosRepository : IPresupuestosRepository
 							pr.Precio,
 							d.Cantidad
 						FROM Presupuestos p
-						INNER JOIN PresupuestosDetalle d ON p.idPresupuestos = d.idPresupuesto
+						INNER JOIN PresupuestosDetalle d ON p.idPresupuesto = d.idPresupuesto
 						INNER JOIN Productos pr ON d.idProducto = pr.idProducto
-						WHERE p.idPresupuestos = @id;
+						WHERE p.idPresupuesto = @id;
 					";
 
 		using var comando = new SqliteCommand(sql, conexion);
@@ -92,7 +88,7 @@ public class PresupuestosRepository : IPresupuestosRepository
 			{
 				presupuesto = new Presupuestos()
 				{
-					idPresupuesto = Convert.ToInt32(lector["idPresupuestos"]),
+					idPresupuesto = Convert.ToInt32(lector["idPresupuesto"]),
 					NombreDestinatario = lector["NombreDestinatario"].ToString(),
 					FechaCreacion = Convert.ToDateTime(lector["FechaCreacion"]),
 					Detalle = new List<PresupuestosDetalle>()
@@ -139,7 +135,7 @@ public class PresupuestosRepository : IPresupuestosRepository
 		using var conexion = new SqliteConnection(conection_string);
 		conexion.Open();
 
-		string sql = "DELETE FROM Presupuestos WHERE idPresupuestos = @id";
+		string sql = "DELETE FROM Presupuestos WHERE idPresupuesto = @id";
 		using var comando = new SqliteCommand(sql, conexion);
 
 		comando.Parameters.Add(new SqliteParameter("@id", id));
