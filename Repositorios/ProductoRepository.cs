@@ -2,7 +2,15 @@ using System.Reflection.Metadata.Ecma335;
 using Microsoft.Data.Sqlite;
 using Microsoft.VisualBasic;
 
-public class ProductoRepository
+interface IProductoRepository
+{
+    void CrearProducto(Productos producto);
+    void ModificarProducto(int id, Productos productos);
+    List<Productos> ListarProductos();
+    Productos ObtenerDetalles(int id);
+    void EliminarProducto(int id);
+}
+public class ProductoRepository : IProductoRepository
 {
     private string conection_string = "Data Source=Tienda.db";
 
@@ -11,7 +19,7 @@ public class ProductoRepository
         using var conexion = new SqliteConnection(conection_string);
         conexion.Open();
 
-        string sql = "INSERT INTO Productos (Descripcion, Precio) VALUES (@Pescripcion, @Drecio)";
+        string sql = "INSERT INTO Productos (Descripcion, Precio) VALUES (@Descripcion, @Precio)";
 
         using var comando = new SqliteCommand(sql, conexion);
 
@@ -97,9 +105,9 @@ public class ProductoRepository
         conexion.Open();
 
         string sql = "DELETE FROM Productos WHERE idProducto = @id";
-        using var comnado = new SqliteCommand(sql, conexion);
+        using var comando = new SqliteCommand(sql, conexion);
 
-        comnado.Parameters.Add(new SqliteParameter("@id", id));
-        comnado.ExecuteNonQuery();
+        comando.Parameters.Add(new SqliteParameter("@id", id));
+        comando.ExecuteNonQuery();
     }
 }
