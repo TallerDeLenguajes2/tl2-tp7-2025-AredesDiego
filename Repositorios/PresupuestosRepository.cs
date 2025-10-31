@@ -1,6 +1,14 @@
 using Microsoft.Data.Sqlite;
 
-public class PresupuestosRepository
+interface IPresupuestosRepository
+{
+	public void CrearPresupuesto(Presupuestos presupuestos);
+	List<Presupuestos> ListarPresupuestos();
+	Presupuestos ObtenerDetalles(int id);
+	void AgregarProductoAPresupuesto(int idPresupuesto, int idProducto, int cantidad);
+	public void EliminarPresupuesto(int id);
+}
+public class PresupuestosRepository : IPresupuestosRepository
 {
 	private string conection_string = "Data Source=Tienda.db";
 	public void CrearPresupuesto(Presupuestos presupuestos)
@@ -23,7 +31,7 @@ public class PresupuestosRepository
 		string sql = "SELECT * FROM Presupuestos;";
 
 		List<Presupuestos> listaPresupuestos = [];
-		
+
 		using var connection = new SqliteConnection(conection_string);
 		connection.Open();
 
@@ -32,7 +40,7 @@ public class PresupuestosRepository
 		using (SqliteDataReader reader = comando.ExecuteReader())
 		{
 			var sqlite_command = new SqliteCommand(sql, connection);
-			
+
 			while (reader.Read())
 			{
 				var presupuestos = new Presupuestos()
@@ -41,7 +49,7 @@ public class PresupuestosRepository
 					NombreDestinatario = reader["NombreDestinatario"].ToString(),
 					FechaCreacion = Convert.ToDateTime(reader["FechaCreacion"])
 				};
-				
+
 				listaPresupuestos.Add(presupuestos);
 			}
 		}
@@ -74,7 +82,7 @@ public class PresupuestosRepository
 		comando.Parameters.Add(new SqliteParameter("@id", id));
 
 		using var lector = comando.ExecuteReader();
-		
+
 		Presupuestos presupuesto = null;
 
 		while (lector.Read())
@@ -90,7 +98,7 @@ public class PresupuestosRepository
 					Detalle = new List<PresupuestosDetalle>()
 				};
 			}
-			
+
 			var producto = new Productos()
 			{
 				idProducto = Convert.ToInt32(lector["idProducto"]),
@@ -106,16 +114,26 @@ public class PresupuestosRepository
 
 			presupuesto.Detalle.Add(detalle);
 		}
-		
+
 		return presupuesto;
 	}
-    
-
-	/*   public AgregarProdcuto() //Agregar un producto y una cantidad a un presupuesto (recibe un id)
+	public void AgregarProductoAPresupuesto(int idPresupuesto, int idProducto, int cantidad)
 	{
-		
-	} */
+		using var conexion = new SqliteConnection(conection_string);
+		conexion.Open();
 
+		string sql = @"
+			INSERT INTO PresupuestoDetalle (idPresupuesto, idProducto, Cantidad)
+			VALUES (@idPresupuesto, @idProducto, @Cantidad);
+		";
+
+		using var comando = new SqliteCommand(sql, conexion);
+		comando.Parameters.Add(new SqliteParameter("@idPresupuesto", idPresupuesto));
+		comando.Parameters.Add(new SqliteParameter("@idProducto", idProducto));
+		comando.Parameters.Add(new SqliteParameter("@Cantidad", cantidad));
+
+		comando.ExecuteNonQuery();
+	}
 	public void EliminarPresupuesto(int id)
 	{
 		using var conexion = new SqliteConnection(conection_string);
