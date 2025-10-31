@@ -6,7 +6,7 @@ interface IPresupuestosRepository
 	List<Presupuestos> ListarPresupuestos();
 	Presupuestos ObtenerDetalles(int id);
 	void AgregarProductoAPresupuesto(int idPresupuesto, int idProducto, int cantidad);
-	public void EliminarPresupuesto(int id);
+	public void EliminarPresupuesto(int id); 
 }
 public class PresupuestosRepository : IPresupuestosRepository
 {
@@ -73,7 +73,7 @@ public class PresupuestosRepository : IPresupuestosRepository
 							pr.Precio,
 							d.Cantidad
 						FROM Presupuestos p
-						INNER JOIN PresupuestoDetalle d ON p.idPresupuestos = d.idPresupuesto
+						INNER JOIN PresupuestosDetalle d ON p.idPresupuestos = d.idPresupuesto
 						INNER JOIN Productos pr ON d.idProducto = pr.idProducto
 						WHERE p.idPresupuestos = @id;
 					";
@@ -123,7 +123,7 @@ public class PresupuestosRepository : IPresupuestosRepository
 		conexion.Open();
 
 		string sql = @"
-			INSERT INTO PresupuestoDetalle (idPresupuesto, idProducto, Cantidad)
+			INSERT INTO PresupuestosDetalle (idPresupuesto, idProducto, Cantidad)
 			VALUES (@idPresupuesto, @idProducto, @Cantidad);
 		";
 

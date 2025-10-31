@@ -5,10 +5,10 @@ using Microsoft.VisualBasic;
 interface IProductoRepository
 {
     void CrearProducto(Productos producto);
-    void ModificarProducto(int id, Productos productos);
+    bool ModificarProducto(int id, Productos productos);
     List<Productos> ListarProductos();
     Productos ObtenerDetalles(int id);
-    void EliminarProducto(int id);
+    bool EliminarProducto(int id);
 }
 public class ProductoRepository : IProductoRepository
 {
@@ -28,19 +28,21 @@ public class ProductoRepository : IProductoRepository
 
         comando.ExecuteNonQuery();
     }
-    public void ModificarProducto(int id, Productos productos)
+    public bool ModificarProducto(int id, Productos productos)
     {
         using var conexion = new SqliteConnection(conection_string);
         conexion.Open();
 
-        string sql = "UPDATE Productos SET Descripcion, Precio WHERE idProducto = @id";
+        string sql = "UPDATE Productos SET Descripcion = @Descripcion, Precio = @Precio WHERE idProducto = @id";
+        
         using var comando = new SqliteCommand(sql, conexion);
-
         comando.Parameters.Add(new SqliteParameter("@idProducto", id));
         comando.Parameters.Add(new SqliteParameter("@Descripcion", productos.Descripcion));
         comando.Parameters.Add(new SqliteParameter("@Precio", productos.Precio));
 
-        comando.ExecuteNonQuery();
+        int filasAfectadas = comando.ExecuteNonQuery();
+
+        return filasAfectadas > 0;
     }
     public List<Productos> ListarProductos()
     {
@@ -99,7 +101,7 @@ public class ProductoRepository : IProductoRepository
 
         return null;
     }
-    public void EliminarProducto(int id)
+    public bool EliminarProducto(int id)
     {
         using var conexion = new SqliteConnection(conection_string);
         conexion.Open();
@@ -108,6 +110,8 @@ public class ProductoRepository : IProductoRepository
         using var comando = new SqliteCommand(sql, conexion);
 
         comando.Parameters.Add(new SqliteParameter("@id", id));
-        comando.ExecuteNonQuery();
+        int filasAfectadas = comando.ExecuteNonQuery(); 
+
+        return filasAfectadas > 0;
     }
 }
