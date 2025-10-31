@@ -42,7 +42,6 @@ public class ProductosController : ControllerBase
         }
     }
 
-
     [HttpGet]
     public ActionResult<List<Productos>> ListarProductos()
     {

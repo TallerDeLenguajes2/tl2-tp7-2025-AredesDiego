@@ -6,7 +6,7 @@ interface IPresupuestosRepository
 	List<Presupuestos> ListarPresupuestos();
 	Presupuestos ObtenerDetalles(int id);
 	void AgregarProductoAPresupuesto(int idPresupuesto, int idProducto, int cantidad);
-	public void EliminarPresupuesto(int id); 
+	public bool EliminarPresupuesto(int id); 
 }
 public class PresupuestosRepository : IPresupuestosRepository
 {
@@ -134,7 +134,7 @@ public class PresupuestosRepository : IPresupuestosRepository
 
 		comando.ExecuteNonQuery();
 	}
-	public void EliminarPresupuesto(int id)
+	public bool EliminarPresupuesto(int id)
 	{
 		using var conexion = new SqliteConnection(conection_string);
 		conexion.Open();
@@ -143,6 +143,8 @@ public class PresupuestosRepository : IPresupuestosRepository
 		using var comando = new SqliteCommand(sql, conexion);
 
 		comando.Parameters.Add(new SqliteParameter("@id", id));
-		comando.ExecuteNonQuery();
+		int filasAfectadas = comando.ExecuteNonQuery(); 
+
+        return filasAfectadas > 0;
 	}
 }
