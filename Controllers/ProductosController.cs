@@ -25,7 +25,7 @@ public class ProductosController : ControllerBase
         }
     }
 
-    [HttpPut("Modificar Producto")]
+    [HttpPut("ModificarProducto")]
     public ActionResult ModificarProducto(int id, [FromBody] Productos producto)
     {
         try
@@ -42,14 +42,14 @@ public class ProductosController : ControllerBase
         }
     }
 
-    [HttpGet("Listar Productos")]
+    [HttpGet("ListarProductos")]
     public ActionResult<List<Productos>> ListarProductos()
     {
         var lista = _repo.ListarProductos();
         return Ok(lista);
     }
 
-    [HttpGet("Obtener Productos")]
+    [HttpGet("ObtenerProductos")]
     public ActionResult<Productos> ObtenerProducto(int id)
     {
         var producto = _repo.ObtenerDetalles(id);
@@ -60,7 +60,7 @@ public class ProductosController : ControllerBase
         return Ok(producto);
     }
 
-    [HttpDelete("Eliminar Producto")]
+    [HttpDelete("EliminarProducto")]
     public ActionResult EliminarProducto(int id)
     {
         bool eliminado = _repo.EliminarProducto(id);

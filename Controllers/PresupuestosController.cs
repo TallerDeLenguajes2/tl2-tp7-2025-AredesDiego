@@ -12,7 +12,7 @@ public class PresupuestosController : ControllerBase
     }
 
 
-    [HttpPost("Crear Presupuesto")]
+    [HttpPost("CrearPresupuesto")]
     public ActionResult CrearPresupuesto([FromBody] Presupuestos nuevoPresupuesto)
     {
         try
@@ -26,7 +26,7 @@ public class PresupuestosController : ControllerBase
         }
     }
 
-    [HttpPost("Agregar Presupuesto")]
+    [HttpPost("AgregarPresupuesto")]
     public ActionResult AgregarProducto(int id, [FromBody] PresupuestosDetalle detalle)
     {
         try
@@ -40,14 +40,14 @@ public class PresupuestosController : ControllerBase
         }
     }
 
-    [HttpGet("Listar Presupuestos")]
+    [HttpGet("ListarPresupuestos")]
     public ActionResult<List<Presupuestos>> ListarPresupuestos()
     {
         var lista = _repo.ListarPresupuestos();
         return Ok(lista);
     }
 
-    [HttpGet("Obtener Presupuesto")]
+    [HttpGet("ObtenerPresupuesto")]
     public ActionResult<Presupuestos> ObtenerDetalles(int id)
     {
         var presupuesto = _repo.ObtenerDetalles(id);
@@ -58,7 +58,7 @@ public class PresupuestosController : ControllerBase
         return Ok(presupuesto);
     }
 
-    [HttpDelete("Eliminar Presupuesto")]
+    [HttpDelete("EliminarPresupuesto")]
     public ActionResult EliminarPresupuesto(int id)
     {
         try
